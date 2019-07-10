@@ -3,6 +3,10 @@ module Main exposing (Model, Msg(..), init, main)
 import Browser
 import Browser.Events exposing (onKeyDown)
 import Debug exposing (toString)
+import Element as El
+import Element.Background as Bg
+import Element.Border as Border
+import Element.Font as Font
 import Html exposing (..)
 import Html.Events exposing (..)
 import Json.Decode
@@ -134,7 +138,16 @@ randomChord =
 -- VIEW
 
 
-viewChord : Model -> Html Msg
+boxTextStyle : Int -> List (El.Attribute Msg)
+boxTextStyle size =
+    [ Font.size size
+    , El.centerX
+    , El.centerY
+    , Font.color colors.prm
+    ]
+
+
+viewChord : Model -> El.Element Msg
 viewChord model =
     let
         noteStr : Note -> String
@@ -185,11 +198,52 @@ viewChord model =
     noteStr model.note
         ++ accStr model.accidental
         ++ scaleStr model.scale
-        |> text
+        |> El.text
+        |> El.el (boxTextStyle 80)
+
+
+colors =
+    { bg = El.rgb255 0x1C 0x29 0x38
+    , box = El.rgb255 0xCD 0x3F 0x3E
+    , prm = El.rgb255 0xF4 0xF6 0xF6
+    }
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ h1 [] [ viewChord model ]
-        ]
+    let
+        r1 =
+            El.el
+                [ Bg.color colors.box
+                , El.width El.fill
+                , El.height <| El.fillPortion 8
+                , Border.rounded 50
+                ]
+                (viewChord model)
+
+        r2 =
+            El.el
+                [ Bg.color colors.box
+                , El.width El.fill
+                , El.height <| El.fillPortion 1
+                , Border.rounded 50
+                ]
+                (El.el (boxTextStyle 40) <| El.text "bok")
+    in
+    El.layout [] <|
+        El.el
+            [ Bg.color colors.bg
+            , El.paddingXY 300 150
+            , El.height El.fill
+            , El.width El.fill
+            ]
+        <|
+            El.column
+                [ El.centerX
+                , El.centerY
+                , El.width El.fill
+                , El.height El.fill
+                , El.spacing 50
+                ]
+                [ r1
+                ]
