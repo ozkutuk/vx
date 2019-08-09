@@ -1,4 +1,5 @@
 # [WIP] vx
+Various tools to practice music theory. Written with Elm and elm-ui.
 
 ### Requirements:
 - Elm
